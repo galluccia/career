@@ -1,5 +1,7 @@
+import os
 import requests
 import pandas as pd
+import seaborn as sns
 
 def main(companyName):
     url = 'https://salarydog.com/api/salary'
@@ -20,12 +22,19 @@ def main(companyName):
     df['EMPLOYMENT_START_DATE'] = df['EMPLOYMENT_START_DATE'].astype('datetime64[ns]')
     df['WAGE_RATE_OF_PAY_FROM'] = df['WAGE_RATE_OF_PAY_FROM'].astype('float')
     
-    plots = {'wageDistPlot':sns.distplot(df['WAGE_RATE_OF_PAY_FROM']),
-             'wageLinePlot':df.set_index(['EMPLOYMENT_START_DATE'])['WAGE_RATE_OF_PAY_FROM'].plot(kind='line'),
-             'medianWageByYear': df[df['EMPLOYMENT_START_DATE']>='2011-01-01'].set_index(['EMPLOYMENT_START_DATE'])['WAGE_RATE_OF_PAY_FROM'].resample('YS').median().plot(kind='line')
+    plots = {'wageDistPlot':sns.distplot(df['WAGE_RATE_OF_PAY_FROM'])
+            # ,'wageLinePlot':df.set_index(['EMPLOYMENT_START_DATE'])['WAGE_RATE_OF_PAY_FROM'].plot(kind='line')
+            # ,'medianWageByYear': df[df['EMPLOYMENT_START_DATE']>='2011-01-01'].set_index(['EMPLOYMENT_START_DATE'])['WAGE_RATE_OF_PAY_FROM'].resample('YS').median().plot(kind='line')
     }
     from os.path import expanduser
     download_path = expanduser("~/Downloads")
     for plot_name in plots:
         fig = plots[plot_name].get_figure()
         fig.savefig(os.path.join(download_path,plot_name), dpi=1000)
+
+    return data
+
+if __name__ == '__main__':
+    companyName = input('Enter Company Name: ')
+    companyName = str(companyName)
+    main(companyName)
